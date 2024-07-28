@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, Image } from 'react-native';
 import { Button } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import axios from 'axios';
@@ -23,7 +23,11 @@ const Home = ({ navigation }) => {
 
   const renderRecipe = ({ item }) => (
     <TouchableOpacity style={styles.recipeItem} onPress={() => navigation.navigate('Recipe', { recipe: item })}>
-      <Text>{item.title}</Text>
+      <Image source={{ uri: item.image }} style={styles.recipeImage} />
+      <View style={styles.recipeDetails}>
+        <Text style={styles.recipeTitle}>{item.title}</Text>
+        <Text style={styles.recipeSummary}>{item.summary}</Text>
+      </View>
     </TouchableOpacity>
   );
 
@@ -69,11 +73,36 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     paddingHorizontal: 10,
     marginRight: 10,
+    borderRadius: 5,
   },
   recipeItem: {
+    flexDirection: 'row',
     padding: 15,
-    borderBottomColor: 'gray',
-    borderBottomWidth: 1,
+    marginVertical: 10,
+    backgroundColor: '#fff',
+    borderRadius: 5,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 5,
+  },
+  recipeImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 5,
+  },
+  recipeDetails: {
+    marginLeft: 10,
+    flex: 1,
+  },
+  recipeTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  recipeSummary: {
+    fontSize: 14,
+    color: 'gray',
   },
 });
 

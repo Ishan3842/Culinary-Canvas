@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Alert, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Alert } from 'react-native';
 import { Input, Button } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
 const Register = ({ navigation }) => {
@@ -12,8 +13,6 @@ const Register = ({ navigation }) => {
   });
 
   const { username, password, confirmPassword } = formData;
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const onChange = (name, value) => setFormData({ ...formData, [name]: value });
 
@@ -22,17 +21,17 @@ const Register = ({ navigation }) => {
       Alert.alert('Error', 'Passwords do not match');
       return;
     }
+
     try {
-      const res = await axios.post('http://192.168.1.128:5000/api/auth/register', {
-        username,
-        password,
-      });
+      const res = await axios.post('http://192.168.1.128:5000/api/auth/register', { username, password });
       console.log(res.data);
-      // Navigate to ProfileSetup page after successful registration
-      navigation.navigate('ProfileSetup');
+      await AsyncStorage.setItem('token', res.data.token); // Save the token in AsyncStorage
+      Alert.alert('Success', 'Registration successful');
+      navigation.navigate('ProfileSetup'); // Navigate to ProfileSetup page after successful registration
     } catch (err) {
-      if (err.response && err.response.data && err.response.data.msg) {
-        Alert.alert('Error', err.response.data.msg);
+      console.error(err.response.data);
+      if (err.response && err.response.data.msg === 'User already exists') {
+        Alert.alert('Error', 'User already exists');
       } else {
         Alert.alert('Error', 'Something went wrong');
       }
@@ -52,27 +51,17 @@ const Register = ({ navigation }) => {
       <Input
         placeholder="Password"
         leftIcon={<Icon name="lock" size={24} color="black" />}
-        rightIcon={
-          <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-            <Icon name={showPassword ? "eye-slash" : "eye"} size={24} color="black" />
-          </TouchableOpacity>
-        }
         value={password}
         onChangeText={(value) => onChange('password', value)}
-        secureTextEntry={!showPassword}
+        secureTextEntry
         inputStyle={styles.input}
       />
       <Input
         placeholder="Confirm Password"
         leftIcon={<Icon name="lock" size={24} color="black" />}
-        rightIcon={
-          <TouchableOpacity onPress={() => setShowConfirmPassword(!showConfirmPassword)}>
-            <Icon name={showConfirmPassword ? "eye-slash" : "eye"} size={24} color="black" />
-          </TouchableOpacity>
-        }
         value={confirmPassword}
         onChangeText={(value) => onChange('confirmPassword', value)}
-        secureTextEntry={!showConfirmPassword}
+        secureTextEntry
         inputStyle={styles.input}
       />
       <Button

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Alert, TextInput } from 'react-native';
 import { Input, Button } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
 const ProfileSetup = ({ navigation }) => {
@@ -44,16 +45,22 @@ const ProfileSetup = ({ navigation }) => {
 
     try {
       const token = await AsyncStorage.getItem('token');
+      console.log('Token:', token); // Log token to ensure it's being retrieved correctly
       const res = await axios.post('http://192.168.1.128:5000/api/profile', formData, {
         headers: {
           'x-auth-token': token,
         },
       });
-      console.log(res.data);
-      Alert.alert('Success', 'Profile setup successful');
-      navigation.navigate('Home');
+
+      if (res && res.data) {
+        console.log('Response Data:', res.data);
+        Alert.alert('Success', 'Profile setup successful');
+        navigation.navigate('Home');
+      } else {
+        throw new Error('Invalid response from server');
+      }
     } catch (err) {
-      console.error(err.response.data);
+      console.error('Error:', err);
       Alert.alert('Error', 'Something went wrong');
     }
   };
