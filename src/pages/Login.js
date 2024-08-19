@@ -18,7 +18,7 @@ const Login = ({ navigation }) => {
 
   const onSubmit = async () => {
     try {
-      const res = await axios.post('http://192.168.1.128:5000/api/auth/login', {
+      const res = await axios.post('http://192.168.29.83:5000/api/auth/login', {
         username,
         password,
       });

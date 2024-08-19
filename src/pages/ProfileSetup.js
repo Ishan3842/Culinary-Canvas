@@ -46,7 +46,7 @@ const ProfileSetup = ({ navigation }) => {
     try {
       const token = await AsyncStorage.getItem('token');
       console.log('Token:', token); // Log token to ensure it's being retrieved correctly
-      const res = await axios.post('http://192.168.1.128:5000/api/profile', formData, {
+      const res = await axios.post('http://192.168.29.83:5000/api/profile', formData, {
         headers: {
           'x-auth-token': token,
         },

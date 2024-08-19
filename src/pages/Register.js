@@ -23,7 +23,7 @@ const Register = ({ navigation }) => {
     }
 
     try {
-      const res = await axios.post('http://192.168.1.128:5000/api/auth/register', { username, password });
+      const res = await axios.post('http://192.168.29.83:5000/api/auth/register', { username, password });
       console.log(res.data);
       await AsyncStorage.setItem('token', res.data.token); // Save the token in AsyncStorage
       Alert.alert('Success', 'Registration successful');
